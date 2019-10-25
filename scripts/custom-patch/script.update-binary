@@ -141,7 +141,13 @@ on_install_failed() {
  cd /cache/bitgapps
  cp -f $TMP/recovery.log /cache/bitgapps/recovery.log
  selinux_variable;
- cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ if [ -f "/system/build.prop" ]; then
+   SYSTEM=/system
+   cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ else
+   SYSTEM=/system/system
+   cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ fi
  cp -f $VENDOR/build.prop /cache/bitgapps/build2.prop
  tar -cz -f "$TMP/bitgapps_debug_failed_logs.tar.gz" *
  cp -f $TMP/bitgapps_debug_failed_logs.tar.gz /sdcard/bitgapps_debug_failed_logs.tar.gz
@@ -154,7 +160,13 @@ on_install_complete() {
  rm -rf /sdcard/bitgapps_debug_complete_logs.tar.gz
  cd /cache/bitgapps
  cp -f $TMP/recovery.log /cache/bitgapps/recovery.log
- cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ if [ -f "/system/build.prop" ]; then
+   SYSTEM=/system
+   cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ else
+   SYSTEM=/system/system
+   cp -f $SYSTEM/build.prop /cache/bitgapps/build.prop
+ fi
  cp -f $VENDOR/build.prop /cache/bitgapps/build2.prop
  tar -cz -f "$TMP/bitgapps_debug_complete_logs.tar.gz" *
  cp -f $TMP/bitgapps_debug_complete_logs.tar.gz /sdcard/bitgapps_debug_complete_logs.tar.gz
