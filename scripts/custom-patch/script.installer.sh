@@ -81,17 +81,21 @@ on_install() {
      SYSTEM=$SYSTEM_MOUNT
      VENDOR=/vendor
    fi
-   echo "Installed Android SDk "29"" >> $CHECK
-   echo "Installed Android Version "10"" >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo "    About Device    " >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo " " >> $CHECK
+   echo "- has Android SDK Version 29" >> $CHECK
+   echo "- has Android Version 10" >> $CHECK
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
    elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has system-as-root Partition" >> $CHECK
+     echo "- has system-as-root Partition=true" >> $CHECK
    else
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has A-only Partition" >> $CHECK
+     echo "- has A-only Partition=true" >> $CHECK
    fi
  elif [ "$android_sdk" = "28" ]; then
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
@@ -107,17 +111,21 @@ on_install() {
      SYSTEM=$SYSTEM_MOUNT
      VENDOR=/vendor
    fi
-   echo "Installed Android SDk "28"" >> $CHECK
-   echo "Installed Android Version "9"" >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo "    About Device    " >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo " " >> $CHECK
+   echo "- has Android SDK Version 28" >> $CHECK
+   echo "- has Android Version 9" >> $CHECK
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
    elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has system-as-root Partition" >> $CHECK
+     echo "- has system-as-root Partition=true" >> $CHECK
    else
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has A-only Partition" >> $CHECK
+     echo "- has A-only Partition=true" >> $CHECK
    fi
  elif [ "$android_sdk" = "27" ]; then
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
@@ -133,17 +141,21 @@ on_install() {
      SYSTEM=$SYSTEM_MOUNT
      VENDOR=/vendor
    fi
-   echo "Installed Android SDk "27"" >> $CHECK
-   echo "Installed Android Version "8.1.0"" >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo "    About Device    " >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo " " >> $CHECK
+   echo "- has Android SDK Version 27" >> $CHECK
+   echo "- has Android Version 8.1.0" >> $CHECK
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
    elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has system-as-root Partition" >> $CHECK
+     echo "- has system-as-root Partition=true" >> $CHECK
    else
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has A-only Partition" >> $CHECK
+     echo "- has A-only Partition=true" >> $CHECK
    fi
  elif [ "$android_sdk" = "25" ]; then
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
@@ -159,20 +171,24 @@ on_install() {
      SYSTEM=$SYSTEM_MOUNT
      VENDOR=/system/vendor
    fi
-   echo "Installed Android SDk "25"" >> $CHECK
-   echo "Installed Android Version "7.1.2"" >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo "    About Device    " >> $CHECK
+   echo "--------------------" >> $CHECK
+   echo " " >> $CHECK
+   echo "- has Android SDK Version 25" >> $CHECK
+   echo "- has Android Version 7.1.2" >> $CHECK
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
    elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has system-as-root Partition" >> $CHECK
+     echo "- has system-as-root Partition=true" >> $CHECK
    else
      echo "- has device_abpartition=false" >> $CHECK
-     echo "- has A-only Partition" >> $CHECK
+     echo "- has A-only Partition=true" >> $CHECK
    fi
  else
-     device_abpartition=false 2>/dev/null
+     echo "ERROR 10: Unable to get partition layout"; >> $CHECK
  fi;
  # Apply patch
  SYSTEM_PRIV_APP="$SYSTEM/priv-app"
