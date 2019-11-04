@@ -28,6 +28,23 @@
 # GNU General Public License for more details.
 ##############################################################
 
+# Check and set existing fstab used by recovery
+fstab() {
+ if [ -f /etc/recovery.fstab ];
+ then
+   FSTAB="/etc/recovery.fstab"
+ elif [ -f /etc/fstab ];
+ then
+   FSTAB="/etc/fstab"
+ elif [ -f /etc/recovery.fstab ] & [ -f /etc/fstab ];
+ then
+   FSTAB="/etc/recovery.fstab"
+ else
+   echo "ERROR: Unable to find fstab from recovery" 2>/dev/null;
+ fi
+}
+#fstab; // function disabled
+
 PROPFILES="/system/build.prop /system/system/build.prop /system_root/system/build.prop"
 
 get_file_prop() {
@@ -70,7 +87,7 @@ on_install() {
      SYSTEM_MOUNT=/system
      SYSTEM=$SYSTEM_MOUNT
      VENDOR=/vendor
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      device_abpartition=false
      SYSTEM_MOUNT=/system_root
      SYSTEM=$SYSTEM_MOUNT/system
@@ -102,7 +119,7 @@ on_install() {
      SYSTEM_MOUNT=/system
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/vendor
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      SYSTEM_MOUNT=/system_root
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/vendor
@@ -120,7 +137,7 @@ on_install() {
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
      echo "- has system-as-root Partition=true" >> $CHECK
    else
@@ -132,7 +149,7 @@ on_install() {
      SYSTEM_MOUNT=/system
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/vendor
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      SYSTEM_MOUNT=/system_root
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/vendor
@@ -150,7 +167,7 @@ on_install() {
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
      echo "- has system-as-root Partition=true" >> $CHECK
    else
@@ -162,7 +179,7 @@ on_install() {
      SYSTEM_MOUNT=/system
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/system/vendor
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      SYSTEM_MOUNT=/system_root
      SYSTEM=$SYSTEM_MOUNT/system
      VENDOR=/system/vendor
@@ -180,7 +197,7 @@ on_install() {
    if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ]; then
      echo "- has device_abpartition=true" >> $CHECK
      echo "- has A/B Partition" >> $CHECK
-   elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ]; then
+   elif [ -n "$(cat $FSTAB | grep /system_root)" ]; then
      echo "- has device_abpartition=false" >> $CHECK
      echo "- has system-as-root Partition=true" >> $CHECK
    else

@@ -60,6 +60,30 @@ selinux_variable() {
   getenforce >> /cache/bitgapps/selinux.log
 }
 
+ui_print() {
+  until [ ! "$1" ]; do
+    echo -e "ui_print $1\nui_print" > $OUTFD;
+    shift;
+  done;
+}
+
+# Check and set existing fstab used by recovery
+fstab() {
+ if [ -f /etc/recovery.fstab ];
+ then
+   FSTAB="/etc/recovery.fstab"
+ elif [ -f /etc/fstab ];
+ then
+   FSTAB="/etc/fstab"
+ elif [ -f /etc/recovery.fstab ] & [ -f /etc/fstab ];
+ then
+   FSTAB="/etc/recovery.fstab"
+ else
+   ui_print "ERROR: Unable to find fstab from recovery" 2>/dev/null;
+ fi
+}
+#fstab; // function disabled
+
 # Detect A/B partition layout https://source.android.com/devices/tech/ota/ab_updates
 # and system-as-root https://source.android.com/devices/bootloader/system-as-root
 if [ -n "$(cat /proc/cmdline | grep slot_suffix)" ];
@@ -67,7 +91,7 @@ then
   device_abpartition=true
   SYSTEM_MOUNT=/system
   VENDOR=/vendor
-elif [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ];
+elif [ -n "$(cat $FSTAB | grep /system_root)" ];
 then
   device_abpartition=false
   SYSTEM_MOUNT=/system_root
@@ -77,13 +101,6 @@ else
   SYSTEM_MOUNT=/system
   VENDOR=/vendor
 fi
-
-ui_print() {
-  until [ ! "$1" ]; do
-    echo -e "ui_print $1\nui_print" > $OUTFD;
-    shift;
-  done;
-}
 
 set_progress() { echo "set_progress $1" > "$OUTFD"; }
 
@@ -244,12 +261,12 @@ ui_print "Mount Partitions";
 # Check partition layout whether system-as-root device or not
 # Prepare installation if its a system-as-root device
 # else prepare installation for A-only & A/B partition
-if [ -n "$(cat /etc/recovery.fstab | grep /system_root)" ];
+if [ -n "$(cat $FSTAB | grep /system_root)" ];
 then
   mounts=""
   for m in "/cache" "/data" "/system_root" "/vendor"; do
     p=$m
-    if [ -d "$p" ] && grep -q "$p" "/etc/recovery.fstab" && ! mountpoint -q "$p"; then
+    if [ -d "$p" ] && grep -q "$p" "$FSTAB" && ! mountpoint -q "$p"; then
       mounts="$mounts $p"
     fi
   done
@@ -260,7 +277,7 @@ else
   mounts=""
   for m in "/cache" "/data" "/system" "$VENDOR"; do
     p=$m
-    if [ -d "$p" ] && grep -q "$p" "/etc/recovery.fstab" && ! mountpoint -q "$p"; then
+    if [ -d "$p" ] && grep -q "$p" "$FSTAB" && ! mountpoint -q "$p"; then
       mounts="$mounts $p"
     fi
   done
@@ -284,11 +301,11 @@ then
 elif [ "$system_as_root" == "true" ];
 then
   device_abpartition=false
-  block=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system_root | grep -o '/dev/[^ ]*' | head -1`
+  block=`cat $FSTAB | cut -d '#' -f 1 | grep /system_root | grep -o '/dev/[^ ]*' | head -1`
   mount -o rw "$block" "$SYSTEM_MOUNT"
 else
   device_abpartition=false
-  block=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1`
+  block=`cat $FSTAB | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1`
   mount -o rw "$block" "$SYSTEM_MOUNT"
 fi
 
