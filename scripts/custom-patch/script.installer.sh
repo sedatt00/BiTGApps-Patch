@@ -45,7 +45,7 @@ fstab() {
 }
 #fstab; // function disabled
 
-PROPFILES="/system/build.prop /system/system/build.prop /system_root/system/build.prop"
+PROPFILES="/system/build.prop /system/system/build.prop /system_root/system/build.prop /sdcard/config.txt"
 
 get_file_prop() {
   grep -m1 "^$2=" "$1" | cut -d= -f2
@@ -68,6 +68,10 @@ get_prop() {
     printf "$prop"
   fi
 }
+
+# Check supported addon from a config file
+supported_config="$(get_prop "ro.config.velvet")";
+supported_target="true";
 
 # Android sdk check
 android_sdk="$(get_prop "ro.build.version.sdk")";
@@ -207,98 +211,113 @@ on_install() {
  else
      echo "ERROR 10: Unable to get partition layout"; >> $CHECK
  fi;
- # Apply patch
- SYSTEM_PRIV_APP="$SYSTEM/priv-app"
- rm -rf $SYSTEM_PRIV_APP/Velvet
- mkdir $SYSTEM_PRIV_APP/Velvet
- mkdir $SYSTEM_PRIV_APP/Velvet/lib
- mkdir $SYSTEM_PRIV_APP/Velvet/lib/arm
- mkdir $SYSTEM_PRIV_APP/Velvet/lib/arm64
- chmod 0755 $SYSTEM_PRIV_APP/Velvet
- chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib
- chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib/arm
- chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib/arm64
- cp -f /data/app/com.google.android.googlequicksearchbox*/base.apk $SYSTEM_PRIV_APP/Velvet/Velvet.apk
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm/libmultiarch_dummy.so $SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libagsa-annotations.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libandroid_dtmf.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libandroid_jingle.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libarcore_sdk_c.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libarcore_sdk_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libbrotli.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libcronet.79.0.3921.2.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libframesequence.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgeller_jni_lib.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgoogle_speech_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgoogle_speech_micro_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liblens_image_util.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liblens_vision.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libnativecrashreporter.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liboffline_actions_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libogg_opus_encoder.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libopuscodec.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libsbcdecoder_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libscene_viewer_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libunified_template_resolver.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libvcdiffjni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so 2>/dev/null
- cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libyoga.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/Velvet.apk
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so 2>/dev/null
- chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so 2>/dev/null
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet";
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/Velvet.apk";
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib";
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm";
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64";
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so" 2>/dev/null;
- chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so" 2>/dev/null;
- rm -rf /data/app/com.google.android.googlequicksearchbox*
- ls $SYSTEM_PRIV_APP/Velvet/Velvet.apk >> $FILES
+}
+
+# Apply patch
+
+on_install_velvet () {
+ # Check whether config file present in device or not
+ if [ -f /sdcard/config.txt ]; then
+   # Complete installation using config file
+   if [ "$supported_config" = "$supported_target" ]; then
+       SYSTEM_PRIV_APP="$SYSTEM/priv-app"
+       rm -rf $SYSTEM_PRIV_APP/Velvet
+       mkdir $SYSTEM_PRIV_APP/Velvet
+       mkdir $SYSTEM_PRIV_APP/Velvet/lib
+       mkdir $SYSTEM_PRIV_APP/Velvet/lib/arm
+       mkdir $SYSTEM_PRIV_APP/Velvet/lib/arm64
+       chmod 0755 $SYSTEM_PRIV_APP/Velvet
+       chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib
+       chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib/arm
+       chmod 0755 $SYSTEM_PRIV_APP/Velvet/lib/arm64
+       cp -f /data/app/com.google.android.googlequicksearchbox*/base.apk $SYSTEM_PRIV_APP/Velvet/Velvet.apk
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm/libmultiarch_dummy.so $SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libagsa-annotations.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libandroid_dtmf.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libandroid_jingle.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libarcore_sdk_c.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libarcore_sdk_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libbrotli.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libcronet.79.0.3921.2.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libframesequence.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgeller_jni_lib.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgoogle_speech_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libgoogle_speech_micro_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liblens_image_util.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liblens_vision.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libnativecrashreporter.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/liboffline_actions_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libogg_opus_encoder.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libopuscodec.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libsbcdecoder_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libscene_viewer_jni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libunified_template_resolver.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libvcdiffjni.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so 2>/dev/null
+       cp -f /data/app/com.google.android.googlequicksearchbox*/lib/arm64/libyoga.so $SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/Velvet.apk
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so 2>/dev/null
+       chmod 0644 $SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so 2>/dev/null
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet";
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/Velvet.apk";
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib";
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm";
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64";
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm/libmultiarch_dummy.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libagsa-annotations.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_dtmf.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libandroid_jingle.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_c.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libarcore_sdk_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libbrotli.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libcronet.79.0.3921.2.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libframesequence.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgeller_jni_lib.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libgoogle_speech_micro_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_image_util.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liblens_vision.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libnativecrashreporter.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/liboffline_actions_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libogg_opus_encoder.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libopuscodec.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libsbcdecoder_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libscene_viewer_jni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libunified_template_resolver.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libvcdiffjni.so" 2>/dev/null;
+       chcon -h u:object_r:system_file:s0 "$SYSTEM_PRIV_APP/Velvet/lib/arm64/libyoga.so" 2>/dev/null;
+       rm -rf /data/app/com.google.android.googlequicksearchbox*
+       ls $SYSTEM_PRIV_APP/Velvet/Velvet.apk >> $FILES
+   else
+       ui_print "ERROR: Config property set to 'false'" 2>/dev/null;
+   fi;
+ else
+   ui_print "ERROR: Unable to find config file" 2>/dev/null;
+ fi;
 }
 
 # execute install function
 on_install;
+#on_install_velvet;  // function disabled
 
 # end method
